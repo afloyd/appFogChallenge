@@ -5174,3 +5174,10 @@ a {
   margin-left: 10px;
   margin-bottom: 0;
 }
+#status,
+#vote-status {
+  margin-bottom: 15px;
+}
+#vote-status {
+  background-color: #FA8072;
+}

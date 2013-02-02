@@ -25,6 +25,7 @@ require('./lib/init').start(app).on('complete', function() {
 	app.set('view engine', 'jade');
 	app.use(require('less-middleware')({ src: __dirname + '/public' }));//was after router
 	app.use(express.favicon());
+	addSessionHandler(express, app);
 	app.use(express.logger());
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
@@ -37,6 +38,9 @@ require('./lib/init').start(app).on('complete', function() {
 	app.use(require('./lib/middleware/render-context')());
 
 	app.use(express.static(path.join(__dirname, 'public')));
+	var passport = require('passport');
+	app.use(passport.initialize());
+	app.use(passport.session());
 	app.use(app.router);
 
 	app.configure('development', function(){
@@ -44,6 +48,7 @@ require('./lib/init').start(app).on('complete', function() {
 	});
 
 	require('./routes/about')(app);
+	require('./routes/open-auth')({app: app});
 	require('./routes/index')(app);//handle all other route requests, no 404's outside of statically served files!!
 
 	var server = http.createServer(app).listen(app.get('port'), function(){
@@ -56,26 +61,21 @@ require('./lib/init').start(app).on('complete', function() {
 		mongoSessionStore: mongoSessionStore
 	});
 
-	var Beer = require('./lib/models').Beer;
-	Beer.find({}, function (err, beers) {
-		if (!beers.length) {
-			//get the beer list!
-			require('http').get('http://appsworld.raxdrg.com/api/beers',
-				function (res) {
-					res.setEncoding('utf8');
-					res.on('data', function (data) {
-						var response = JSON.parse(data);
-						if (response.beers) {
-							response.beers.forEach(function (beer) {
-								console.log(beer);
-								new Beer({ beerId: beer.id, name: beer.name }).save();
-							});
-						}
-					});
-					res.on('error', function (err) {
-						console.error(err);
-					})
-			});
-		}
-	});
+	var beerService = require('./lib/services/beer');
+	beerService.addBeers();
+	beerService.pollForNewBeers();
 });
+
+function addSessionHandler(express, app) {
+	var MongoStore = require('connect-mongo')(express);
+	mongoSessionStore = new MongoStore(conf.mongoSession.db);
+
+	app.use(express.cookieParser());
+	app.use(express.session({
+		secret: conf.mongoSession.secret,
+		key: conf.mongoSession.key,
+		cookie: { maxAge: 691200000 }, // 1000(ms) * 60(sec) * 60(min) * 24(hr) * 8(days) -- after competition ends
+		expires: true,
+		store: mongoSessionStore
+	}));
+}

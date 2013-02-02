@@ -3,15 +3,25 @@ extends layout/layout
 block content
 	- var maxVotes = 0, totalVotes = 0;
 	each beer in beers
-		- totalVotes += beer.votes;
+		- totalVotes += parseInt(beer.votes);
 		if (beer.votes > maxVotes)
 			- maxVotes = beer.votes;
 	.well
+		#online-status.well ...Initializing connection to get global voting udpates...
+		if !(req.session.passport && req.session.passport.user)
+			#vote-status.well Not authorized to vote, please log in with:&nbsp
+				a(href="/auth/facebook") Facebook
+		else
+			//-TODO: Show already voted message
+			#vote-status.well Waiting on server connection to enable voting
+
+		#vote-message.well.hide
+
 		form.form-horizontal
-			legend Vote the beer of choice for Apps & Beers:
+			legend Vote your beer of choice for Rackspace/AppFog Happy Hour January 2013:
 			each beer in beers
 				.control-group
-					label.control-label.beer-btn-width: button.btn.btn-primary.beer-btn(data-name=beer.name)= beer.name
+					label.control-label.beer-btn-width: button.btn.beer-btn(data-name=beer.name)= beer.name
 					.controls.votes-style: span.votes Votes:
 						span.vote-num(class=beer.name.replace(/ /g, '').toLowerCase()) #{beer.votes}
 						.progress
