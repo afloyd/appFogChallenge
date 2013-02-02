@@ -1,0 +1,6 @@
+{
+	"mongoSession": {
+		"secret": "appFog super secret session",
+		"key": "sid"
+	}
+}

@@ -1,0 +1,23 @@
+extends layout/layout
+
+block content
+	- var maxVotes = 0, totalVotes = 0;
+	each beer in beers
+		- totalVotes += beer.votes;
+		if (beer.votes > maxVotes)
+			- maxVotes = beer.votes;
+	.well
+		form.form-horizontal
+			legend Vote the beer of choice for Apps & Beers:
+			each beer in beers
+				.control-group
+					label.control-label.beer-btn-width: button.btn.btn-primary.beer-btn(data-name=beer.name)= beer.name
+					.controls.votes-style: span.votes Votes:
+						span.vote-num(class=beer.name.replace(/ /g, '').toLowerCase()) #{beer.votes}
+						.progress
+							.bar(style='width:' + (beer.votes/maxVotes*100) + '%')
+			.control-group
+				.control-label
+				.controls.votes-style
+					h3 Total Votes:&nbsp;
+						span#total-votes= totalVotes

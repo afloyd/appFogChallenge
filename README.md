@@ -1,4 +1,2 @@
-appFogChallenge
-===============
-
-Apps &amp; Beers Challenge
+3DprintContest
+============

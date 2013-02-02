@@ -1,0 +1,21 @@
+{
+	"name": "application-name",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app"
+	},
+	"dependencies": {
+		"express"			: "3.0.6",
+		"jade"				: "*",
+		"less-middleware"	: "*",
+		"mongodb"		  	: "1.1.11",
+		"connect-mongo" 	: "0.2.0",
+		"mongoose"        	: "3.4.0",
+		"moment"		  	: "1.7.2",
+		"numeral"		  	: "1.4.5",
+		"async"			  	: "0.1.22",
+		"socket.io"			: "0.9.3",
+		"bcrypt-nodejs"		: "0.0.2"
+	}
+}

@@ -1,0 +1,32 @@
+@geekBlue: #4b71b2;
+
+@import '../third-party/bootstrap/less/bootstrap';
+@import 'fonts';
+@import 'top-nav';
+@import 'footer';
+@import 'views/about';
+
+body {
+	padding: 145px 50px 45px;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	min-width: 968px;
+}
+
+a {
+	color: @geekBlue;
+}
+
+.control-label.beer-btn-width {
+	width:190px;
+}
+
+.controls.votes-style {
+	margin-left: 190px;
+	.votes {
+		margin-left: 10px;
+		.progress {
+			margin-left: 10px;
+			margin-bottom: 0;
+		}
+	}
+}

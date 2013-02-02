@@ -1,0 +1,11 @@
+- mainNavTab = typeof mainNavTab !== 'undefined' ? mainNavTab : '';
+#top-nav.navbar.no-fix.navbar-fixed-top
+	.navbar-inner
+		span.logo.pull-left
+			a.brand(href='/'): img(src='/img/beer.png')
+		span.links
+			h2.title
+				div Apps & Beers Contest&nbsp;
+				div
+					a(href='https://twitter.com/Rackspace', onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=800,toolbar=1,resizable=0'); return false;") @Rackspace
+					a(href='https://twitter.com/Appfog', onclick="window.open(this.href, 'mywin', 'left=20,top=20,width=1000,height=800,toolbar=1,resizable=0'); return false;") @AppFog

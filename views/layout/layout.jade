@@ -1,0 +1,19 @@
+doctype 5
+html
+	head
+		title= siteTitle + ' - ' + title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='icon', type='image/png', href='img/beer.ico')
+		script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js')
+		script(type='text/javascript', src='/socket.io/socket.io.js')
+		script(type='text/javascript', src='/third-party/moment-js-1.7.2.js')
+		script(type='text/javascript', src='/js/contest.js')
+		script(type='text/javascript', src='/js/main.js')
+	body
+		include _top-nav
+		#content-pane
+			block content
+
+		include _footer
+
+		script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.min.js')
