@@ -17,9 +17,22 @@ block content
 		#online-status.well.clearfix ...Initializing connection to get global voting udpates...
 		if !(req.session.passport && req.session.passport.user)
 			#vote-status.well.clearfix Not authorized to vote, please log in with:&nbsp
-				a(href="/auth/facebook") Facebook
-				| &nbsp;
-				b (log in only used to verify unique votes)
+				div.login-method
+					a#facebook-login(href="/auth/facebook") Facebook
+					| &nbsp;
+					b (log in only used to verify unique vote)
+				div.login-method
+					a#facebook-login(href="/auth/twitter") Twitter
+					| &nbsp;
+					b (log in only used to verify unique vote)
+				div.login-method
+					a#use-captcha Log in with captcha
+					#recaptcha-area.hide
+						span#recaptcha!= reCaptchaHtml
+						.recaptcha-extras
+							button#recaptcha-submit.btn.btn-primary Submit
+							span#recaptcha-error.hide Incorrect, please try again
+
 		else
 			#vote-status.well.clearfix Waiting on server connection to enable voting
 

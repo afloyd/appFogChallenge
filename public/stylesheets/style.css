@@ -5168,6 +5168,26 @@ a {
   margin-top: 3px;
   margin-left: 5px;
 }
+.login-method {
+  margin-top: 5px;
+}
+.login-method a {
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+  padding: 2px 2px;
+}
+.login-method .recaptcha-extras {
+  margin-top: 5px;
+}
+.login-method .recaptcha-extras #recaptcha-error {
+  font-weight: bold;
+  margin-left: 5px;
+  padding: 5px;
+  background-color: #fff;
+  color: #000;
+  border-radius: 5px;
+}
 .form-horizontal .control-group {
   margin-bottom: 10px;
 }

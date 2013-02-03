@@ -79,6 +79,41 @@
 				return false;
 			});
 		});
+		var $reCaptcha = $('#recaptcha');
+		$('#use-captcha').click(function () {
+			$(this).hide();
+
+			$('#recaptcha-area').show();
+			var $captchaResponseField = $('#recaptcha_response_field').focus(),
+				$captchaChallengeField = $('#recaptcha_challenge_field');
+			$captchaResponseField.keypress(function (e) {
+				if (e.which === 13) {
+					checkCaptcha();
+				}
+			});
+			$('#recaptcha-submit').click(function () {
+				checkCaptcha();
+			});
+			var $recaptchaError = $('#recaptcha-error');
+			function checkCaptcha() {
+				$recaptchaError.hide();
+				Contest.ajax('captcha', {
+					url: 'auth/captcha',
+					data: {challenge: $captchaChallengeField.val(), answer: $captchaResponseField.val() },
+					type: 'POST'
+				}).done(function (response) {
+					if (response.isValid) {
+						window.location.href = '/';
+					} else {
+						$recaptchaError.show();
+						//Recaptcha.reload();
+
+					}
+				}).fail(function (reasons) {
+					console.log('unhandled error: ', reasons);
+				});
+			}
+		});
 
 		handleTopNavStyle();
 	});
