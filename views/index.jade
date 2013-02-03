@@ -2,26 +2,35 @@ extends layout/layout
 
 block content
 	- var maxVotes = 0, totalVotes = 0;
+	- console.log('already voted: ', alreadyVoted);
 	each beer in beers
 		- totalVotes += parseInt(beer.votes);
 		if (beer.votes > maxVotes)
 			- maxVotes = beer.votes;
-	.well
-		#online-status.well ...Initializing connection to get global voting udpates...
+	.addthis_toolbox.addthis_default_style.pull-left(addthis:url="http://favbeer.rs.af.cm", addthis:title='Help me win an iPad!')
+		a.addthis_button_facebook_like
+		a.addthis_button_email
+		a.addthis_button_preferred_1
+		a.addthis_button_preferred_2
+		a.addthis_button_compact Share
+	#vote-container.well
+		#online-status.well.clearfix ...Initializing connection to get global voting udpates...
 		if !(req.session.passport && req.session.passport.user)
-			#vote-status.well Not authorized to vote, please log in with:&nbsp
+			#vote-status.well.clearfix Not authorized to vote, please log in with:&nbsp
 				a(href="/auth/facebook") Facebook
+				| &nbsp;
+				b (log in only used to verify unique votes)
 		else
-			//-TODO: Show already voted message
-			#vote-status.well Waiting on server connection to enable voting
+			#vote-status.well.clearfix Waiting on server connection to enable voting
 
-		#vote-message.well.hide
+		#vote-message.well.clearfix.hide
 
 		form.form-horizontal
 			legend Vote your beer of choice for Rackspace/AppFog Happy Hour January 2013:
 			each beer in beers
 				.control-group
-					label.control-label.beer-btn-width: button.btn.beer-btn(data-name=beer.name)= beer.name
+					label.control-label.beer-btn-width: button.btn.beer-btn(data-name=beer.name,
+						data-already-voted=alreadyVoted.toString())= beer.name
 					.controls.votes-style: span.votes Votes:
 						span.vote-num(class=beer.name.replace(/ /g, '').toLowerCase()) #{beer.votes}
 						.progress

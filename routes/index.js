@@ -7,9 +7,13 @@ module.exports = function (app) {
 				delete beer.id; //don't give away the ids, lol!!
 				beer.votes = beer.votes.length;
 			});
+
+			var alreadyVoted = !req.user ? false : !!req.user.voted;
+
 			res.render('index', {
 				title: 'Cast your vote!',
-				beers: beers
+				beers: beers,
+				alreadyVoted: alreadyVoted
 			});
 		})
 	});

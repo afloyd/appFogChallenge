@@ -19,11 +19,11 @@ module.exports = function (opts) {
 		});
 	});
 
-	passport.use(new FacebookStrategy({
-			clientID: '333563403426755',
-			clientSecret: 'c07a6fb49a5550ca2ec3243a2117cbaf',
-			callbackURL: "http://local.host:3000/auth/facebook/callback"/*"http://favbeer.rs.af.cm/auth/facebook/callback"*/
-		},
+	var fbConf = global.conf.facebook;
+	fbConf.callbackURL = 'http://' + fbConf.host + '/auth/facebook/callback';
+	delete fbConf.host;
+
+	passport.use(new FacebookStrategy(fbConf,
 		function(accessToken, refreshToken, profile, done) {
 			//console.log('profile: ', profile);
 			User.findOne({authType: 'facebook', authId: profile.id }, function(err, user) {

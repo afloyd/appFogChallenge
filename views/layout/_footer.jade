@@ -4,7 +4,10 @@
 		.span4
 			| &copy; Austin Floyd 2013 |&nbsp;
 			a(href='\about') About
-		.counter.pull-right Views: #{views}
+		.counter.pull-right Users online:&nbsp;
+			span#users-online ?
+			| &nbsp| Views:&nbsp;
+			span#page-views= views
 //- addThis sharing
 script(type="text/javascript")
 	var addthis_config = {"data_track_clickback":true};
@@ -13,7 +16,7 @@ script(type="text/javascript", src="//s7.addthis.com/js/300/addthis_widget.js#pu
 //- Google Analytics
 script(type="text/javascript")
 	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-37991948-1']);
+	_gaq.push(['_setAccount', 'UA-38176494-1']);
 	_gaq.push(['_trackPageview']);
 
 	(function() {

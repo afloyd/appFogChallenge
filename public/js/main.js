@@ -6,20 +6,24 @@
 
 (function ($) {
 	$(function () {
-		var $totalVotes;
-		var socket = Contest.io = io.connect('/', { 'connect timeout': 5000 }),
+		var $totalVotes = $('#total-votes'),
+			$usersOnline = $('#users-online'),
+			socket = Contest.io = io.connect('/', { 'connect timeout': 5000 }),
 			vote = Contest.vote = io.connect('/vote', { 'connect timeout': 5000 });
-		$totalVotes = $('#total-votes');
 
 		socket.on('connect', function () {
-			if (typeof console !== 'undefined') console.log('connected');
+			log('connected');
 			$('#online-status').hide();
 		}).on('connect_failed', function () {
-		   if (typeof console !== 'undefined') console.log('disconnected from server');
+		   log('disconnected from server');
 		   $('#online-status').html('client or server error, cannot connect');
 		}).on('disconnect', function () {
-		  	if (typeof console !== 'undefined') console.log('disconnected from server');
+		  	log('disconnected from server');
 		  	$('#online-status').html('disconnected from server');
+		}).on('users online', function (count) {
+			$('#users-online').html(count);
+	  	}).on('page views', function (count) {
+			$('#page-views').html(count);
 		});
 
 		socket.on('vote update', function (message) {
@@ -48,21 +52,25 @@
 
 		vote.on('connect', function () {
 			$('#vote-status').remove();
-			console.log('connected to /vote');
-			$('.beer-btn').addClass('btn-success').unbind().click(function () {
+			log('connected to /vote');
+			var hasVoted = $('.beer-btn').data('alreadyVoted');
+			$('.beer-btn').addClass(!hasVoted ? 'btn-success' : '').unbind().click(function () {
 				var $btn = $(this);
-				console.log('casting vote for' + $btn.data('name'));
+				log('casting vote for' + $btn.data('name'));
 				vote.emit('cast vote', $btn.data('name'));
 				return false;
 			});
 		}).on('already voted', function (message) {
 			$('.btn').removeClass('btn-success');
-			$('#vote-message').html(message).show();
+			$('#vote-message').html(message).show().css('background-color', 'yellow');
 			setTimeout(function () {
-				$('#vote-message').hide();
+				$('#vote-message').hide().css('background-color', 'inherit');
 			}, 15000);
+		}).on('thanks', function (message) {
+			$('.btn').removeClass('btn-success');
+			$('#vote-message').html(message).show().css('background-color', 'yellow');
 		}).on('connect_failed', function () {
-			console.log('connect to /vote failed');
+			log('connect to /vote failed');
 			$('.beer-btn').unbind().click(function () {
 				$('#vote-message').html('You must be logged in to vote, log in above').show();
 				setTimeout(function () {
@@ -85,3 +93,9 @@
 		});
 	}
 })(jQuery);
+
+function log() {
+	if (typeof console !== 'undefined' && typeof console.log !== 'undefined') {
+		console.log.apply(console, arguments);
+	}
+}
