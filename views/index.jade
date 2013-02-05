@@ -1,55 +1,77 @@
 extends layout/layout
 
 block content
+	meta(name='Description',
+		content='Rackspace / Appfog Happy Hour, vote to help choose which beers make it to the party and live chat about it! Written using nodeJS, expressJS 3, socket.io, passportJS')
 	- var maxVotes = 0, totalVotes = 0;
 	- console.log('already voted: ', alreadyVoted);
 	each beer in beers
 		- totalVotes += parseInt(beer.votes);
 		if (beer.votes > maxVotes)
 			- maxVotes = beer.votes;
-	.addthis_toolbox.addthis_default_style.pull-left(addthis:url="http://favbeer.rs.af.cm", addthis:title='Help me win an iPad!')
-		a.addthis_button_facebook_like
-		a.addthis_button_email
-		a.addthis_button_preferred_1
-		a.addthis_button_preferred_2
-		a.addthis_button_compact Share
-	#vote-container.well
-		#online-status.well.clearfix ...Initializing connection to get global voting udpates...
-		if !(req.session.passport && req.session.passport.user)
-			#vote-status.well.clearfix Not authorized to vote, please log in with:&nbsp
-				div.login-method
-					a#facebook-login(href="/auth/facebook") Facebook
+	- console.log('max votes: ', totalVotes);
+	.row-fluid
+		.span12.addthis_toolbox.addthis_default_style.pull-left(addthis:url="http://favbeer.rs.af.cm", addthis:title='Help me win an iPad!')
+			a.addthis_button_facebook_like
+			a.addthis_button_email
+			a.addthis_button_preferred_1
+			a.addthis_button_preferred_2
+			a.addthis_button_compact Share
+	.row-fluid
+		.span9
+			#vote-container.well
+				#online-status.well.clearfix ...Initializing connection to get global voting udpates...
+				if !(req.session.passport && req.session.passport.user)
+					#vote-status.well.clearfix Not authorized to vote, please log in with:&nbsp
+						div.login-method
+							a#facebook-login(href="/auth/facebook") Facebook
+							| &nbsp;
+							b (log in only used to verify unique vote)
+						div.login-method
+							a#facebook-login(href="/auth/twitter") Twitter
+							| &nbsp;
+							b (log in only used to verify unique vote)
+						div.login-method
+							a#use-captcha Log in with captcha
+							| &nbsp;
+							b (just enter some random words to log in)
+							#recaptcha-area.hide
+								span#recaptcha!= reCaptchaHtml
+								.recaptcha-extras
+									button#recaptcha-submit.btn.btn-primary Submit
+									span#recaptcha-error.hide Incorrect, please try again
+
+				else
+					#vote-status.well.clearfix Waiting on server connection to enable voting
+
+				#vote-message.well.clearfix.hide
+
+				form.form-horizontal
+					legend Vote your beer of choice for Rackspace/AppFog Happy Hour January 2013:
+					each beer in beers
+						.control-group
+							label.control-label.beer-btn-width: button.btn.beer-btn(data-name=beer.name,
+								data-already-voted=alreadyVoted.toString())= beer.name
+							.controls.votes-style: span.votes Votes:
+								span.vote-num(class=beer.name.replace(/ /g, '').toLowerCase()) #{beer.votes}
+								.progress
+									.bar(style='width:' + (beer.votes/maxVotes*100) + '%')
+					.control-group
+						.control-label
+						.controls.votes-style
+							h3 Total Votes:&nbsp;
+								span#total-votes= totalVotes
+		.span3
+			#chat-area.well
+				h3(style='width:100%') Live chat&nbsp;
+				div#alias-display.hide
+					span#alias-name
 					| &nbsp;
-					b (log in only used to verify unique vote)
-				div.login-method
-					a#facebook-login(href="/auth/twitter") Twitter
-					| &nbsp;
-					b (log in only used to verify unique vote)
-				div.login-method
-					a#use-captcha Log in with captcha
-					#recaptcha-area.hide
-						span#recaptcha!= reCaptchaHtml
-						.recaptcha-extras
-							button#recaptcha-submit.btn.btn-primary Submit
-							span#recaptcha-error.hide Incorrect, please try again
-
-		else
-			#vote-status.well.clearfix Waiting on server connection to enable voting
-
-		#vote-message.well.clearfix.hide
-
-		form.form-horizontal
-			legend Vote your beer of choice for Rackspace/AppFog Happy Hour January 2013:
-			each beer in beers
-				.control-group
-					label.control-label.beer-btn-width: button.btn.beer-btn(data-name=beer.name,
-						data-already-voted=alreadyVoted.toString())= beer.name
-					.controls.votes-style: span.votes Votes:
-						span.vote-num(class=beer.name.replace(/ /g, '').toLowerCase()) #{beer.votes}
-						.progress
-							.bar(style='width:' + (beer.votes/maxVotes*100) + '%')
-			.control-group
-				.control-label
-				.controls.votes-style
-					h3 Total Votes:&nbsp;
-						span#total-votes= totalVotes
+					a#alias-change (change alias)
+				textarea#chat-pane(type='text', rows='5', disabled)
+				.input-append
+					input#alias.span2(type="text", placeholder='name')
+					button#alias-set.btn(type="button") Set alias
+				#chat-input.input-append.hide
+					input#chat-message.span2(type="text", placeholder='message')
+					button#chat-send.btn(type="button) Say It!

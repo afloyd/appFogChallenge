@@ -2,7 +2,9 @@
 	.navbar-inner.row
 		.span4
 		.span4
-			| &copy; Austin Floyd 2013 |&nbsp;
+			| &copy;&nbsp;
+			a(href='http://www.linkedin.com/pub/austin-floyd/28/61b/295', target='_blank') Austin Floyd
+			| &nbsp;2013 |&nbsp;
 			a(href='\about') About
 		.counter.pull-right Users online:&nbsp;
 			span#users-online ?
@@ -15,12 +17,4 @@ script(type="text/javascript", src="//s7.addthis.com/js/300/addthis_widget.js#pu
 
 //- Google Analytics
 script(type="text/javascript")
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-38176494-1']);
-	_gaq.push(['_trackPageview']);
-
-	(function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	})();
+	var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-38176494-1']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();

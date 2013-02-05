@@ -1,5 +1,7 @@
 extends layout/layout
 block content
+	meta(name='Description',
+		content='Rackspace / Appfog Happy Hour app written by Austin Floyd. Some technologies used: nodeJS, expressJS 3, socket.io, passportJS')
 	.about.hero-unit
 		.row-fluid(style='text-align:center')
 			h1.span12 Please&nbsp;
@@ -7,7 +9,8 @@ block content
 				| &nbsp;& help me get an iPad
 			h2.span12 My name is Austin... Just you're "average" developer writing amazing nodeJS apps. This one is
 				| running on nodeJS, using socket.io for live data streaming from server, with passport Facebook &
-				| Twitter authentication. If you stay on the
+				| Twitter authentication. If you stay on the&nbsp;
 				a(href='/') home page
-				| you can watch the votes coming in live! At the bottom of the screen you can see the current number
-				| of users online and the number of page views, which both also update live using socket.io.
+				| &nbsp;you can watch the votes coming in live and chat with other people online! At the bottom of the
+				| screen you can see the current number of users online and the number of page views, which both also
+				| update live using socket.io.

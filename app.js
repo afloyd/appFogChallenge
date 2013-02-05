@@ -17,7 +17,7 @@ require('./lib/init').start(app).on('complete', function() {
 	var http = require('http'),
 		path = require('path');
 
-	app.locals.siteTitle = 'App & Beers Contest';
+	app.locals.siteTitle = 'Apps & Beers Contest';
 	app.locals.moment = require('moment');
 
 	app.set('port', process.env.PORT || 3000);

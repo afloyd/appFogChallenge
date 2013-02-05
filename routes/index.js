@@ -4,9 +4,37 @@ var reCaptcha = require('recaptcha-async').reCaptcha,
 	reCaptchaPrivKey = process.env['recaptcha_priv_key'],
 	ajaxResponse = require('../lib/ajaxResponse'),
 	User = require('../lib/models').User,
-	util = require('../lib/util');
+	util = require('../lib/util'),
+	maxCaptchaRetries = 3;
 
 module.exports = function (app) {
+	app.get(/\/auth\/no-captcha/, function (req, res, next) {
+		if (!req.isJSON && req.session.captchaRetries && req.session.captchaRetries >= maxCaptchaRetries) {
+			var authId = util.getRandomToken();
+			User.findOne({authType: 'noCaptcha', authId: authId }, function(err, user) {
+				if (err) {
+					console.error('error getting user from DB', err);
+					res.redirect('/');
+				}
+
+				if (!user) {
+					var user =  new User({
+											 authType: 'noCaptcha',
+											 authId: authId
+										 });
+					user.save(function (err, savedUser) {
+						if (err) {
+							console.error('error saving noCaptcha user to DB', err, user);
+							return ajaxResponse.error('error saving noCaptcha user', next);
+						}
+						req.session.passport = { user: savedUser._id };
+						res.redirect('/');
+					});
+				}
+			});
+		}
+	});
+
 	app.post(/\/auth\/captcha/, function (req, res, next) {
 		if (!req.isJSON) { return next(); }
 
@@ -17,7 +45,15 @@ module.exports = function (app) {
 		var captcha = new reCaptcha();
 		captcha.on('data', function (response) {
 			if(!response.is_valid){
-				ajaxResponse.success({isValid: false}, res);
+				var retries = req.session.captchaRetries;
+				retries = req.session.captchaRetries = !retries ? 1 : ++retries;
+				var html;
+				if (retries >= maxCaptchaRetries) {
+					html = '<span>I see you\'re having a hard time with reCaptcha... Just ' +
+							'<a href="/auth/no-captcha">Click here</a> to vote without it</span>';
+				}
+
+				ajaxResponse.success({isValid: false, html: html}, res);
 			} else {
 				var authId = util.getRandomToken();
 				User.findOne({authType: 'reCaptcha', authId: authId }, function(err, user) {
@@ -49,9 +85,12 @@ module.exports = function (app) {
 
 	app.get(/./, function(req, res){
 		Beer.find({}, function (err, beers) {
-			beers.map(function (beer) {
+			var beersForUi = [];
+			beers.forEach(function (beer) {
+				beer = beer.toObject();
 				delete beer.id; //don't give away the ids, lol!!
 				beer.votes = beer.votes.length;
+				beersForUi.push(beer);
 			});
 
 			var alreadyVoted = false,
@@ -64,7 +103,7 @@ module.exports = function (app) {
 
 			res.render('index', {
 				title: 'Cast your vote!',
-				beers: beers,
+				beers: beersForUi,
 				alreadyVoted: alreadyVoted,
 				reCaptchaHtml: reCaptchaHtml
 			});
