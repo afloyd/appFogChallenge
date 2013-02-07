@@ -7,9 +7,18 @@ var reCaptcha = require('recaptcha-async').reCaptcha,
 	util = require('../lib/util'),
 	maxCaptchaRetries = 3;
 
+var beerInfoLinks = {
+	1: 'https://www.google.com/search?q=Widmer+Hefeweisen',
+	2: 'http://www.ratebeer.com/beer/sierra-nevada-pale-ale-bottle-can/365/',
+	3: 'http://en.wikipedia.org/wiki/Stella_Artois',
+	4: 'http://en.wikipedia.org/wiki/Lagunitas_Brewing_Company#IPA_.28India_Pale_Ale.29',
+	5: 'http://en.wikipedia.org/wiki/Newcastle_Brown_Ale',
+	6: 'http://en.wikipedia.org/wiki/Guinness'
+};
+
 module.exports = function (app) {
 	app.get(/\/auth\/no-captcha/, function (req, res, next) {
-		if (!req.isJSON && req.session.captchaRetries && req.session.captchaRetries >= maxCaptchaRetries) {
+		if (!req.isJSON/* && req.session.captchaRetries && req.session.captchaRetries >= maxCaptchaRetries*/) {
 			var authId = util.getRandomToken();
 			User.findOne({authType: 'noCaptcha', authId: authId }, function(err, user) {
 				if (err) {
@@ -90,6 +99,7 @@ module.exports = function (app) {
 				beer = beer.toObject();
 				delete beer.id; //don't give away the ids, lol!!
 				beer.votes = beer.votes.length;
+				beer.url = beerInfoLinks[beer.beerId];
 				beersForUi.push(beer);
 			});
 
@@ -97,16 +107,44 @@ module.exports = function (app) {
 				reCaptchaHtml = '';
 			if (req.user) {
 				alreadyVoted = !!req.user.voted;
+				return res.render('index', {
+					title: 'Cast your vote!',
+					beers: beersForUi,
+					alreadyVoted: alreadyVoted,
+					reCaptchaHtml: reCaptchaHtml
+				});
 			} else {
-				reCaptchaHtml = new reCaptcha().getCaptchaHtml(reCaptchaPubKey);
-			}
+				var authId = util.getRandomToken();
+				User.findOne({authType: 'noCaptcha', authId: authId }, function(err, user) {
+					if (err) {
+						console.error('error trying to create new user, duplicate userId in DB', err);
+						res.redirect('/');
+					}
 
-			res.render('index', {
-				title: 'Cast your vote!',
-				beers: beersForUi,
-				alreadyVoted: alreadyVoted,
-				reCaptchaHtml: reCaptchaHtml
-			});
+					if (!user) {
+						var user =  new User({
+							authType: 'no-captcha-',
+							authId: authId
+						});
+						user.save(function (err, savedUser) {
+							if (err) {
+								console.error('error saving noCaptcha user to DB', err, user);
+								return ajaxResponse.error('error saving noCaptcha user', next);
+							}
+							req.session.passport = { user: savedUser._id };
+
+
+							res.render('index', {
+								title: 'Cast your vote!',
+								beers: beersForUi,
+								alreadyVoted: false,
+								reCaptchaHtml: reCaptchaHtml
+							});
+						});
+					}
+				});
+				//reCaptchaHtml = new reCaptcha().getCaptchaHtml(reCaptchaPubKey);
+			}
 		})
 	});
 };

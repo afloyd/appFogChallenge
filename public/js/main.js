@@ -3,6 +3,31 @@
  * Date: 1/21/13
  * Time: 8:29 PM
  */
+var beerDescriptions = {
+	'Lagunitas IPA': 'The IPA is Lagunitas Brewing Company\'s flagship beer; it is described as moderately hoppy and ' +
+			'well balanced. Copious Cascade and Centennial hops with Crystal malt. "An IPA built to make you want ' +
+			'another sip."[9] On the bottle label: "Thanks for choosing to spend the next few minutes with this ' +
+			'special homicidally hoppy ale. Savor the moment as the raging hop character engages the Imperial ' +
+			'Qualities of the Malt Foundation in mortal combat on the battlefield of your palate!"',
+	'Stella Artois': "Stella Artois (pron.: /ˈstɛlə ɑrˈtwɑː/), informally called Stella, is a 5.2% ABV lager beer " +
+			"brewed in Leuven, Belgium, since 1926. A lower alcohol content (4% ABV) version is also sold " +
+			"in the UK, Republic of Ireland, Canada and New Zealand.[1] Stella Artois is one of the " +
+			"prominent brands of Anheuser-Busch InBev, the world's largest brewer.",
+	'Widmer Hefeweisen': "A cloudy brew with high quality wheat. It's bold, clean flavor and pronouced citrus and " +
+			"floral aromas are what define American-style hefeweizen. Usually garnished with a lemon.",
+	'Newcastle Brown Ale': 'Available filtered and pasteurised in keg and bottle. Newcastle Brown Ale was first ' +
+			'brewed in 1927 in Newcastle-upon-Tyne, England, by Jim Porter after three years of development. ' +
+			'Production moved from Newcastle to Gateshead at the end of 2004 and to Tadcaster on closure of the ' +
+			'Dunston brewery in 2010. ',
+	'Sierra Nevada Pale Ale': 'Sierra Nevada Pale Ale is a delightful example of the classic pale ale style. It has ' +
+			'a deep amber color and a exceptionally full-bodied, complex character. The fragrant bouquet and spicy ' +
+			'flavor are the results of the generous use of the best Cascade hops.',
+	'Guiness Stout': 'Guinness (pron.: /ˈɡɪnɨs/ gin-is) is a popular Irish dry stout that originated in the brewery of ' +
+			'Arthur Guinness (1725–1803) at St. James\'s Gate, Dublin. A feature of the product is the burnt flavour ' +
+			'that is derived from roasted unmalted barley, although this is a relatively modern development, not ' +
+			'becoming part of the grist until the mid-20th century. The draught beer\'s thick, creamy head comes ' +
+			'from mixing the beer with nitrogen when poured. It is popular with Irish people both in Ireland and abroad'
+};
 
 (function ($) {
 	$(function () {
@@ -48,7 +73,7 @@
 			$chatMessage.val('');
 		}).on('clean messages', function (regex) {
 			regex = new RegExp(regex, 'g');
-			console.log('new val', $chatPane.val().replace(regex, ''));
+			log('new val', $chatPane.val().replace(regex, ''));
 			$chatPane.val($chatPane.val().replace(regex, ''));
 		}).on('clear all', function () {
 			$chatPane.val('...sorry had to clear messages...\n');
@@ -138,6 +163,17 @@
 
 		$alias.focus();
 
+		$('.info-link').click(function () {
+			window.open($(this).data('url'), '_blank');
+		}).each(function (key, elem) {
+			var $link = $(elem);
+			$link.popover({
+				title: $link.data('name'),
+				trigger: 'hover',
+				content: beerDescriptions[$link.data('name')] + ' Click to read more in another window!'
+			});
+		});
+
 		var $reCaptcha = $('#recaptcha');
 		$('#use-captcha').click(function () {
 			$(this).hide();
@@ -161,7 +197,7 @@
 					data: {challenge: $captchaChallengeField.val(), answer: $captchaResponseField.val() },
 					type: 'POST'
 				}).done(function (response) {
-					console.log(response);
+					log(response);
 					if (response.isValid) {
 						window.location.href = '/';
 					} else if (response.html) {
@@ -173,7 +209,7 @@
 
 					}
 				}).fail(function (reasons) {
-					console.log('unhandled error: ', reasons);
+					log('unhandled error: ', reasons);
 				});
 			}
 		});
