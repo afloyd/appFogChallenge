@@ -19,7 +19,7 @@ block content
 		.span9
 			#vote-container.well
 				#online-status.well.clearfix ...Initializing connection to get global voting udpates...
-				//-if !(req.session.passport && req.session.passport.user)
+				if !(req.session.passport && req.session.passport.user)
 					#vote-status.well.clearfix Not authorized to vote, please log in with:&nbsp
 						div.login-method
 							a#just-vote(href="/auth/no-captcha", style='background-color:yellow;font-size:20px') Just vote!
@@ -43,8 +43,8 @@ block content
 									button#recaptcha-submit.btn.btn-primary Submit
 									span#recaptcha-error.hide Incorrect, please try again
 
-				//else
-				#vote-status.well.clearfix Waiting on server connection to enable voting
+				else
+					#vote-status.well.clearfix Waiting on server connection to enable voting
 
 				#vote-message.well.clearfix.hide
 

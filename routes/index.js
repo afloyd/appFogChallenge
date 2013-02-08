@@ -114,6 +114,8 @@ module.exports = function (app) {
 					reCaptchaHtml: reCaptchaHtml
 				});
 			} else {
+				/*
+				//Don't require logging in code
 				var authId = util.getRandomToken();
 				User.findOne({authType: 'noCaptcha', authId: authId }, function(err, user) {
 					if (err) {
@@ -142,9 +144,16 @@ module.exports = function (app) {
 							});
 						});
 					}
-				});
-				//reCaptchaHtml = new reCaptcha().getCaptchaHtml(reCaptchaPubKey);
+				});*/
+				reCaptchaHtml = new reCaptcha().getCaptchaHtml(reCaptchaPubKey);
 			}
+
+			res.render('index', {
+				title: 'Cast your vote!',
+				beers: beersForUi,
+				alreadyVoted: alreadyVoted,
+				reCaptchaHtml: reCaptchaHtml
+			});
 		})
 	});
 };
